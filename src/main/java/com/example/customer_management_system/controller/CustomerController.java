@@ -4,6 +4,8 @@ import com.example.customer_management_system.dto.CustomerRequest;
 import com.example.customer_management_system.entity.Customer;
 import com.example.customer_management_system.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,26 +13,43 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
-@RequestMapping("/api/v1/customers")
+@RequestMapping("customers")  // Note: use /customers instead of /api/v1/customers for Thymeleaf UI
 @RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
 
-    // LIST
+    // ---------------- LIST WITH PAGINATION + SEARCH ----------------
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("customers", customerService.findAll());
+    public String list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String keyword,
+            Model model) {
+
+        Page<Customer> customers;
+        if (keyword.isEmpty()) {
+            customers = customerService.findAll(PageRequest.of(page, size));
+        } else {
+            customers = customerService.search(keyword, PageRequest.of(page, size));
+        }
+
+        model.addAttribute("customers", customers.getContent());
+        model.addAttribute("totalPages", customers.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("keyword", keyword);
+
         return "customers/list";
     }
 
-    // SHOW CREATE FORM
+    // ---------------- CREATE FORM ----------------
     @GetMapping("/new")
-    public String createForm() {
+    public String createForm(Model model) {
+        model.addAttribute("customer", new CustomerRequest(null, null, null));
         return "customers/create";
     }
 
-    // SAVE (manual mapping to record)
+    // ---------------- SAVE ----------------
     @PostMapping
     public String save(HttpServletRequest request) {
         CustomerRequest customerRequest = CustomerRequest.builder()
@@ -43,7 +62,7 @@ public class CustomerController {
         return "redirect:/customers";
     }
 
-    // SHOW EDIT FORM
+    // ---------------- EDIT FORM ----------------
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id, Model model) {
         Customer customer = customerService.findById(id);
@@ -51,7 +70,7 @@ public class CustomerController {
         return "customers/edit";
     }
 
-    // UPDATE
+    // ---------------- UPDATE ----------------
     @PostMapping("/update/{id}")
     public String update(@PathVariable Long id, HttpServletRequest request) {
         CustomerRequest customerRequest = CustomerRequest.builder()
@@ -64,7 +83,7 @@ public class CustomerController {
         return "redirect:/customers";
     }
 
-    // DELETE
+    // ---------------- DELETE ----------------
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         customerService.delete(id);

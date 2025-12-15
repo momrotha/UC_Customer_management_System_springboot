@@ -5,6 +5,8 @@ import com.example.customer_management_system.entity.Customer;
 import com.example.customer_management_system.repository.CustomerRepository;
 import com.example.customer_management_system.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +50,17 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void delete(Long id) {
         customerRepository.deleteById(id);
+    }
+
+    // ---------------- Pagination & Search ----------------
+
+    @Override
+    public Page<Customer> findAll(Pageable pageable) {
+        return customerRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Customer> search(String keyword, Pageable pageable) {
+        return customerRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, pageable);
     }
 }
