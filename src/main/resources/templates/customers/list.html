@@ -22,7 +22,7 @@
 
   <!-- Search -->
   <form th:action="@{/customers}" method="get" class="row g-2 mb-3">
-    <div class="col-md-4">
+  <div class="col-md-4">
       <input type="text"
              name="keyword"
              th:value="${keyword}"
@@ -86,7 +86,7 @@
 
       <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
         <a class="page-link"
-           th:href="@{/customers(page=${currentPage-1}, keyword=${keyword})}">
+           th:href="@{/templates/customers(page=${currentPage-1}, keyword=${keyword})}">
           Previous
         </a>
       </li>
@@ -96,14 +96,14 @@
           th:classappend="${i == currentPage} ? 'active'">
         <a class="page-link"
            th:text="${i + 1}"
-           th:href="@{/customers(page=${i}, keyword=${keyword})}">
+           th:href="@{/templates/customers(page=${i}, keyword=${keyword})}">
         </a>
       </li>
 
       <li class="page-item"
           th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
         <a class="page-link"
-           th:href="@{/customers(page=${currentPage+1}, keyword=${keyword})}">
+           th:href="@{/templates/customers(page=${currentPage+1}, keyword=${keyword})}">
           Next
         </a>
       </li>

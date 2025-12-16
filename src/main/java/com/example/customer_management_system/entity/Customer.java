@@ -4,11 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "customers")
+@Getter @Setter
 public class Customer {
 
     @Id
@@ -18,4 +15,9 @@ public class Customer {
     private String name;
     private String email;
     private String phone;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
+

@@ -1,92 +1,135 @@
+//package com.example.customer_management_system.controller;
+//
+//import com.example.customer_management_system.dto.CustomerRequest;
+//import com.example.customer_management_system.entity.User;
+//import com.example.customer_management_system.repository.UserRepository;
+//import com.example.customer_management_system.service.CustomerService;
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.stereotype.Controller;
+//import org.springframework.ui.Model;
+//import org.springframework.web.bind.annotation.*;
+//
+//@Controller
+//@RequestMapping("/customers")
+//@RequiredArgsConstructor
+//public class CustomerController {
+//
+//    private final CustomerService customerService;
+//    private final UserRepository userRepository;
+//
+//
+//    @GetMapping
+//    public String list(
+//            @RequestParam(defaultValue = "") String keyword,
+//            Model model,
+//            Authentication authentication
+//    ) {
+//        String email = authentication.getName();
+//        User user = userRepository.findByEmail(email).orElseThrow();
+//
+//        model.addAttribute("customers",
+//                customerService.findByUser(user, keyword));
+//
+//        return "customers/list";
+//    }
+//
+//    @PostMapping
+//    public String save(CustomerRequest request, Authentication authentication) {
+//        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+//        customerService.save(request, user);
+//        return "redirect:/customers";
+//    }
+//
+//
+//    @GetMapping("/delete/{id}")
+//    public String delete(@PathVariable Long id, Authentication authentication) {
+//        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+//        customerService.delete(id, user);
+//        return "redirect:/customers";
+//    }
+//
+//    @PostMapping("/update/{id}")
+//    public String update(@PathVariable Long id, CustomerRequest request, Authentication authentication) {
+//        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+//        customerService.update(id, request, user);
+//        return "redirect:/customers";
+//    }
+//}
+
 package com.example.customer_management_system.controller;
 
 import com.example.customer_management_system.dto.CustomerRequest;
-import com.example.customer_management_system.entity.Customer;
+import com.example.customer_management_system.entity.User;
+import com.example.customer_management_system.repository.UserRepository;
 import com.example.customer_management_system.service.CustomerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @Controller
-@RequestMapping("customers")  // Note: use /customers instead of /api/v1/customers for Thymeleaf UI
+@RequestMapping("/customers")
 @RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final UserRepository userRepository;
 
-    // ---------------- LIST WITH PAGINATION + SEARCH ----------------
     @GetMapping
     public String list(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "") String keyword,
-            Model model) {
-
-        Page<Customer> customers;
-        if (keyword.isEmpty()) {
-            customers = customerService.findAll(PageRequest.of(page, size));
-        } else {
-            customers = customerService.search(keyword, PageRequest.of(page, size));
-        }
-
-        model.addAttribute("customers", customers.getContent());
-        model.addAttribute("totalPages", customers.getTotalPages());
-        model.addAttribute("currentPage", page);
+            Model model,
+            Authentication authentication
+    ) {
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+        model.addAttribute("customers", customerService.findByUser(user, keyword));
         model.addAttribute("keyword", keyword);
-
         return "customers/list";
     }
 
-    // ---------------- CREATE FORM ----------------
+//    @GetMapping("/new")
+//    public String createForm(Model model) {
+//        model.addAttribute("customer", new CustomerRequest("", "", ""));
+//        return "customers/new";
+//    }
     @GetMapping("/new")
-    public String createForm(Model model) {
-        model.addAttribute("customer", new CustomerRequest(null, null, null));
-        return "customers/create";
+    public String newCustomer() {
+        return "customers/new"; // Thymeleaf will look for this template
     }
 
-    // ---------------- SAVE ----------------
-    @PostMapping
-    public String save(HttpServletRequest request) {
-        CustomerRequest customerRequest = CustomerRequest.builder()
-                .name(request.getParameter("name"))
-                .email(request.getParameter("email"))
-                .phone(request.getParameter("phone"))
-                .build();
 
-        customerService.save(customerRequest);
+    @PostMapping
+    public String save(CustomerRequest request, Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+        customerService.save(request, user);
         return "redirect:/customers";
     }
 
-    // ---------------- EDIT FORM ----------------
     @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Long id, Model model) {
-        Customer customer = customerService.findById(id);
+    public String editForm(@PathVariable Long id, Model model, Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+        var customer = customerService.findById(id);
+        if (!customer.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
+        }
         model.addAttribute("customer", customer);
         return "customers/edit";
     }
 
-    // ---------------- UPDATE ----------------
     @PostMapping("/update/{id}")
-    public String update(@PathVariable Long id, HttpServletRequest request) {
-        CustomerRequest customerRequest = CustomerRequest.builder()
-                .name(request.getParameter("name"))
-                .email(request.getParameter("email"))
-                .phone(request.getParameter("phone"))
-                .build();
-
-        customerService.update(id, customerRequest);
+    public String update(@PathVariable Long id, CustomerRequest request, Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+        customerService.update(id, request, user);
         return "redirect:/customers";
     }
 
-    // ---------------- DELETE ----------------
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        customerService.delete(id);
+    public String delete(@PathVariable Long id, Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+        customerService.delete(id, user);
         return "redirect:/customers";
     }
 }
+
