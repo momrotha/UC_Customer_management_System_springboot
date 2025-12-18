@@ -14,7 +14,9 @@ public interface CustomerService {
 
     void save(CustomerRequest request, User user);
 
+    // Pass user to update/delete for role-based access
     void update(Long id, CustomerRequest request, User user);
 
     void delete(Long id, User user);
 }
+
