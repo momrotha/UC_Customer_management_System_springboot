@@ -1,9 +1,5 @@
-package com.example.customer_management_system.controller;
+package com.example.customer_management_system;
 
-import com.example.customer_management_system.dto.CustomerRequest;
-import com.example.customer_management_system.entity.User;
-import com.example.customer_management_system.repository.UserRepository;
-import com.example.customer_management_system.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;

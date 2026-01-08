@@ -1,6 +1,5 @@
-package com.example.customer_management_system.repository;
+package com.example.customer_management_system;
 
-import com.example.customer_management_system.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

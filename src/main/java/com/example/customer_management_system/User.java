@@ -1,4 +1,4 @@
-package com.example.customer_management_system.entity;
+package com.example.customer_management_system;
 
 import jakarta.persistence.*;
 import lombok.Getter;

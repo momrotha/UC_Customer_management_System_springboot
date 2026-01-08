@@ -1,7 +1,5 @@
-package com.example.customer_management_system.config;
+package com.example.customer_management_system;
 
-import com.example.customer_management_system.entity.User;
-import com.example.customer_management_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

@@ -1,8 +1,4 @@
-package com.example.customer_management_system.service;
-
-import com.example.customer_management_system.dto.CustomerRequest;
-import com.example.customer_management_system.entity.Customer;
-import com.example.customer_management_system.entity.User;
+package com.example.customer_management_system;
 
 import java.util.List;
 

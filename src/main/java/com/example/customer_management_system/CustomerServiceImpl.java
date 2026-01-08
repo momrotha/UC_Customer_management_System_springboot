@@ -1,12 +1,6 @@
-package com.example.customer_management_system.service.impl;
+package com.example.customer_management_system;
 
-import com.example.customer_management_system.dto.CustomerRequest;
-import com.example.customer_management_system.entity.Customer;
-import com.example.customer_management_system.entity.User;
-import com.example.customer_management_system.repository.CustomerRepository;
-import com.example.customer_management_system.service.CustomerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
