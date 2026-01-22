@@ -1,16 +1,19 @@
 package com.example.customer_management_system;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
+
+    // Manual constructor to replace @RequiredArgsConstructor
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     @Override
     public List<Customer> findByUser(User user, String keyword) {
@@ -33,9 +36,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void save(CustomerRequest request, User user) {
         Customer customer = new Customer();
-        customer.setName(request.name());
-        customer.setEmail(request.email());
-        customer.setPhone(request.phone());
+        customer.setName(request.getName());
+        customer.setEmail(request.getEmail());
+        customer.setPhone(request.getPhone());
         customer.setUser(user); // 🔐 IMPORTANT
         customerRepository.save(customer);
     }
@@ -48,9 +51,9 @@ public class CustomerServiceImpl implements CustomerService {
             throw new RuntimeException("Access denied");
         }
 
-        customer.setName(request.name());
-        customer.setEmail(request.email());
-        customer.setPhone(request.phone());
+        customer.setName(request.getName());
+        customer.setEmail(request.getEmail());
+        customer.setPhone(request.getPhone());
         customerRepository.save(customer);
     }
 

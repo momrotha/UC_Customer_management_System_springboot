@@ -1,17 +1,21 @@
 package com.example.customer_management_system;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@RequiredArgsConstructor
 public class DataInitializer {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    // Manual constructor to replace @RequiredArgsConstructor
+    public DataInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Bean
     CommandLineRunner initUsers() {
@@ -36,4 +40,3 @@ public class DataInitializer {
         };
     }
 }
-

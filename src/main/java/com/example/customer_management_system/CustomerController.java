@@ -1,6 +1,5 @@
 package com.example.customer_management_system;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -9,11 +8,16 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/customers")
-@RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
     private final UserRepository userRepository;
+
+    // Manual constructor to replace @RequiredArgsConstructor
+    public CustomerController(CustomerService customerService, UserRepository userRepository) {
+        this.customerService = customerService;
+        this.userRepository = userRepository;
+    }
 
     @GetMapping
     public String list(
